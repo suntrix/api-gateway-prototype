@@ -1,0 +1,10 @@
+version: "3.6"
+
+services:
+  gateway:
+    image : gateway-native:latest
+    build:
+      context: .
+      dockerfile: ./docker/native/Dockerfile
+    ports:
+      - "8080:8080"
