@@ -1,35 +1,24 @@
 package suntrix.api.gateway.target.omdb
 
 import io.ktor.client.call.*
-import io.ktor.client.engine.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import suntrix.api.gateway.target.default.httpClientEngine
+import suntrix.api.gateway.target.default.ApiClient
 
 /**
  * Created by Sebastian Owodzin on 06/03/2022
  */
-class OMDBApiClient(
-    apiKey: String,
-    engine: HttpClientEngine = httpClientEngine()
-) : suntrix.api.gateway.target.default.ApiClient(
-    Url("https://www.omdbapi.com"),
-    mapOf("apikey" to apiKey),
-    engine
-) {
-
-    suspend fun searchMovie(title: String, releaseYear: Int): MovieResponse =
-        httpClient.get("/") {
-            url {
-                parameter("t", title)
-                parameter("type", "movie")
-                parameter("y", releaseYear)
-                parameter("plot", "full")
-            }
-        }.body()
-}
+suspend fun ApiClient.omdb_searchMovie(title: String, releaseYear: Int, apiKey: String): MovieResponse =
+    httpClient.get("https://www.omdbapi.com/") {
+        url {
+            parameter("t", title)
+            parameter("type", "movie")
+            parameter("y", releaseYear)
+            parameter("plot", "full")
+            parameter("apikey", apiKey)
+        }
+    }.body()
 
 @Serializable
 data class MovieResponse(

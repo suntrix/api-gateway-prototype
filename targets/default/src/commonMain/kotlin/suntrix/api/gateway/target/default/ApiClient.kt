@@ -13,14 +13,12 @@ import kotlinx.serialization.json.Json
 /**
  * Created by Sebastian Owodzin on 06/03/2022
  */
-abstract class ApiClient(
-    private val baseUrl: Url,
-    private val requestParams: Map<String, String>,
+class ApiClient(
     private val engine: HttpClientEngine = httpClientEngine()
 ) : Closeable {
 
     private var _httpClient: HttpClient? = null
-    protected val httpClient: HttpClient
+    val httpClient: HttpClient
         get() {
             if (_httpClient == null) {
                 _httpClient = createHttpClient(engine)
@@ -50,14 +48,7 @@ abstract class ApiClient(
         BrowserUserAgent()
 
         defaultRequest {
-            host = baseUrl.host
             contentType(ContentType.Application.Json)
-            url {
-                protocol = baseUrl.protocol
-                requestParams.forEach {
-                    parameters.append(it.key, it.value)
-                }
-            }
         }
     }
 }

@@ -1,35 +1,22 @@
 package suntrix.api.gateway.target.tmdb
 
 import io.ktor.client.call.*
-import io.ktor.client.engine.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import suntrix.api.gateway.target.default.httpClientEngine
+import suntrix.api.gateway.target.default.ApiClient
 
 /**
  * Created by Sebastian Owodzin on 06/03/2022
  */
-class TMDBApiClient(
-    apiKey: String,
-    engine: HttpClientEngine = httpClientEngine()
-) : suntrix.api.gateway.target.default.ApiClient(
-    Url("https://api.themoviedb.org"),
-    mapOf("api_key" to apiKey),
-    engine
-) {
-
-    suspend fun searchMovie(title: String, releaseYear: Int): MovieResponse =
-        httpClient.get("/3/search/movie") {
-            url {
-                parameter("query", title)
-                parameter("primary_release_year", releaseYear)
-            }
-        }.body()
-
-    suspend fun genres(): GenresResponse = httpClient.get("/3/genre/movie/list").body()
-}
+suspend fun ApiClient.tmdb_searchMovie(title: String, releaseYear: Int, apiKey: String): MovieResponse =
+    httpClient.get("https://api.themoviedb.org/3/search/movie") {
+        url {
+            parameter("query", title)
+            parameter("primary_release_year", releaseYear)
+            parameter("api_key", apiKey)
+        }
+    }.body()
 
 @Serializable
 data class MovieResponse(

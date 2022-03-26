@@ -5,11 +5,11 @@ import io.ktor.server.application.*
 import io.ktor.server.resources.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.utils.io.core.*
 import kotlinx.coroutines.async
 import kotlinx.serialization.Serializable
-import suntrix.api.gateway.target.omdb.OMDBApiClient
-import suntrix.api.gateway.target.tmdb.TMDBApiClient
+import suntrix.api.gateway.target.default.ApiClient
+import suntrix.api.gateway.target.omdb.omdb_searchMovie
+import suntrix.api.gateway.target.tmdb.tmdb_searchMovie
 
 /**
  * Created by Sebastian Owodzin on 06/03/2022
@@ -25,19 +25,17 @@ data class MovieRoute(
 
 fun Application.movieProxy() {
 
-    val omdbApiClient = OMDBApiClient("ac6ddc16")
-    val tmdbApiClient = TMDBApiClient("eeb9798510a128cad0ab19d19db2f563")
+    val apiClient = ApiClient()
 
     routing {
         get<MovieRoute> {
-            val omdbMovieDeferred = async { omdbApiClient.use { api -> api.searchMovie(it.title, it.releaseYear) } }
-            val tmdbMovieDeferred = async { tmdbApiClient.use { api -> api.searchMovie(it.title, it.releaseYear) } }
+            val omdbMovieDeferred = async { apiClient.omdb_searchMovie(it.title, it.releaseYear, "ac6ddc16") }
+            val tmdbMovieDeferred = async { apiClient.tmdb_searchMovie(it.title, it.releaseYear, "eeb9798510a128cad0ab19d19db2f563") }
 
             val omdbData = omdbMovieDeferred.await()
             val tmdbData = tmdbMovieDeferred.await()
 
-//            val omdbData = omdbApiClient.use { api -> api.searchMovie(it.title, it.releaseYear) }
-//            val tmdbData = tmdbApiClient.use { api -> api.searchMovie(it.title, it.releaseYear) }
+            apiClient.close()
 
             val ratings = omdbData.ratings.map { Response.Rating(it.source, it.value) }.plus(
                 tmdbData.results.firstOrNull { it.title == omdbData.title }?.run {
