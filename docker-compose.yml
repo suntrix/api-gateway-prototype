@@ -1,10 +1,27 @@
 version: "3.6"
 
+networks:
+  internal-net:
+    name: gateway
+
 services:
-  gateway:
-    image : gateway-native:latest
+  nginx:
+    image: nginx-proxy
     build:
       context: .
-      dockerfile: ./docker/native/Dockerfile
+      dockerfile: ./docker/nginx/Dockerfile
+    depends_on:
+      - gateway
     ports:
-      - "8080:8080"
+      - "80:80"
+    networks:
+      - internal-net
+
+  gateway:
+    image : gateway-native:latest
+    container_name: gateway.backend
+    build:
+      context: .
+      dockerfile: ./docker/gateway/native/Dockerfile
+    networks:
+      - internal-net
