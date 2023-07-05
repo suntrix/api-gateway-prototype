@@ -1,12 +1,3 @@
-val junit_version: String by project
-val koin_version: String by project
-val kotlinx_cli: String by project
-val kotlinx_coroutines_version: String by project
-val kotlinx_io_version: String by project
-val kotlinx_serialization_version: String by project
-val ktor_version: String by project
-val logback_version: String by project
-
 plugins {
     application
     kotlin("multiplatform")
@@ -31,9 +22,9 @@ tasks {
 
 kotlin {
     jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
+//        compilations.all {
+//            kotlinOptions.jvmTarget = "1.8"
+//        }
         withJava()
 //        testRuns["test"].executionTask.configure {
 //            useJUnitPlatform()
@@ -59,10 +50,7 @@ kotlin {
     sourceSets {
         all {
             languageSettings.apply {
-                apiVersion = "1.6"
-                languageVersion = "1.6"
                 progressiveMode = true
-//                optIn("io.ktor.server.locations.KtorExperimentalLocationsAPI")
             }
         }
 
@@ -71,36 +59,36 @@ kotlin {
                 implementation(project(":targets:open-movie-database"))
                 implementation(project(":targets:the-movie-db"))
 
+//                implementation("io.github.pdvrieze.xmlutil:serialization")
 //                implementation("io.insert-koin:koin-ktor:$koin_version")
-                implementation("io.ktor:ktor-server-cio:$ktor_version")
-                implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
-                implementation("io.ktor:ktor-server-core:$ktor_version")
-//                implementation("io.ktor:ktor-server-default-headers:$ktor_version")
-                implementation("io.ktor:ktor-server-resources:$ktor_version")
-                implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinx_coroutines_version")
+                implementation("io.ktor:ktor-server-cio:${Versions.KTOR}")
+                implementation("io.ktor:ktor-server-content-negotiation:${Versions.KTOR}")
+//                implementation("io.ktor:ktor-server-core:${Versions.KTOR}")
+////                implementation("io.ktor:ktor-server-default-headers:${Versions.KTOR}")
+                implementation("io.ktor:ktor-server-resources:${Versions.KTOR}")
+//                implementation("io.ktor:ktor-serialization-kotlinx-json:${Versions.KTOR}")
+//                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.Kotlinx.COROUTINES}")
             }
         }
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation(kotlin("test"))
 
-                implementation("io.ktor:ktor-server-tests:$ktor_version")
+//                implementation("io.ktor:ktor-server-tests:${Versions.KTOR}")
             }
         }
 
         val jvmMain by getting {
             dependencies {
-                implementation("ch.qos.logback:logback-classic:$logback_version")
+//                implementation("ch.qos.logback:logback-classic:${Versions.LOGBACK}")
             }
         }
 
         val jvmTest by getting {
             dependencies {
-                implementation(kotlin("test-junit"))
-                implementation("junit:junit:$junit_version")
+//                implementation(kotlin("test-junit"))
+//                implementation("junit:junit:${Versions.JUNIT}")
             }
         }
     }

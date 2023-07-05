@@ -9,3 +9,5 @@
 *.http
 /service-account.json
 /.run/*.run.xml
+
+.DS_Store
